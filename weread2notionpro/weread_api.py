@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import re
+print(f"读取到的WEREAD_COOKIE: {os.getenv('WEREAD_COOKIE')}")
 
 import requests
 from requests.utils import cookiejar_from_dict
@@ -60,25 +61,24 @@ class WeReadApi:
 
     def parse_cookie_string(self):
         cookies_dict = {}
-        # 打印正则表达式内容，检查其是否正确
+        print(f"原始cookie字符串: {self.cookie}")
         pattern = re.compile(r'([^=]+)=([^;]+);?\s*')
         print(pattern.pattern)
         matches = pattern.findall(self.cookie)
-        # 打印正则表达式匹配结果，确认是否符合预期
-        print(matches)
+        print(f"匹配结果: {matches}")
         for match in matches:
             try:
-                if len(match) == 2:
-                    key, value = match
+                if len(match) != 2:
+                    print(f"异常匹配结果: {match}，长度不为2，不符合键值对格式")
+                    continue
+                key, value = match
+                try:
                     cookies_dict[key] = value.encode('unicode_escape').decode('ascii')
-                else:
-                    print(f"无效的cookie格式: {match}")
+                except Exception as e:
+                    print(f"处理键值对 {key}:{value} 时出错: {e}")
             except ValueError:
-                print(f"解包cookie对时出错: {match}")
-
-        # 直接使用 cookies_dict 创建 cookiejar
+                print(f"解包cookie对 {match} 时出错")
         cookiejar = cookiejar_from_dict(cookies_dict)
-
         return cookiejar
 
 
