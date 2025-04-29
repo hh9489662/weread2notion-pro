@@ -67,18 +67,18 @@ class WeReadApi:
 
     def parse_cookie_string(self):
         cookies_dict = {}
-        decoded_cookie = unquote(self.cookie)  # 放在方法内部计算
+        decoded_cookie = unquote(self.cookie)  # Decode the cookie string
         pairs = decoded_cookie.split('; ')
         for pair in pairs:
-            parts = pair.split('=')
+            parts = pair.split('=', 1)  # Split only at the first '='
             if len(parts) != 2 or not parts[0] or not parts[1]:
-                print(f"无效的键值对: {pair}，格式不符合要求")
+                print(f"Invalid key-value pair: {pair}, does not meet format requirements")
                 continue
             key, value = parts
             try:
                 cookies_dict[key] = value.encode('unicode_escape').decode('ascii')
             except Exception as e:
-                print(f"处理键值对 {key}:{value} 时出错: {e}")
+                print(f"Error processing key-value pair {key}:{value}: {e}")
         cookiejar = cookiejar_from_dict(cookies_dict)
         return cookiejar
 
