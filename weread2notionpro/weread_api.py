@@ -60,13 +60,13 @@ class WeReadApi:
 
     def parse_cookie_string(self):
         cookies_dict = {}
-        print(f"原始cookie字符串: {self.cookie}")  # 打印原始cookie字符串
-        # 使用正则表达式解析 cookie 字符串
+        # 打印正则表达式内容，检查其是否正确
         pattern = re.compile(r'([^=]+)=([^;]+);?\s*')
+        print(pattern.pattern)
         matches = pattern.findall(self.cookie)
-
+        # 打印正则表达式匹配结果，确认是否符合预期
+        print(matches)
         for match in matches:
-            print(f"当前匹配结果: {match}")  # 打印每次匹配结果
             try:
                 if len(match) == 2:
                     key, value = match
