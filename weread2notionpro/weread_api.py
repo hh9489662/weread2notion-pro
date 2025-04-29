@@ -60,17 +60,25 @@ class WeReadApi:
 
     def parse_cookie_string(self):
         cookies_dict = {}
-        
         # 使用正则表达式解析 cookie 字符串
         pattern = re.compile(r'([^=]+)=([^;]+);?\s*')
         matches = pattern.findall(self.cookie)
-        
-        for key, value in matches:
-            cookies_dict[key] = value.encode('unicode_escape').decode('ascii')
+
+        for match in matches:
+            try:
+                if len(match) == 2:  # 检查匹配结果是否为有效的键值对
+                    key, value = match
+                    cookies_dict[key] = value.encode('unicode_escape').decode('ascii')
+                else:
+                    print(f"无效的cookie格式: {match}")  # 打印无效格式的匹配结果
+            except ValueError:
+                print(f"解包cookie对时出错: {match}")  # 捕获解包错误并打印
+
         # 直接使用 cookies_dict 创建 cookiejar
         cookiejar = cookiejar_from_dict(cookies_dict)
-        
+
         return cookiejar
+
 
     def get_bookshelf(self):
         self.session.get(WEREAD_URL)
